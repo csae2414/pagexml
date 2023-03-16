@@ -1738,7 +1738,8 @@ void TextFeatExtractor::estimateAngles( PageImage& cvimg, float* _slope, float* 
 
   //#pragma omp critical
   if( deslope ) {
-    tm = high_resolution_clock::now();
+    if( verbose )
+      tm = high_resolution_clock::now();
     desloped.deskew( 0.4*QuantumRange );
     if( verbose )
       fprintf(stderr,"deslope time: %d us\n",(int)duration_cast<microseconds>(high_resolution_clock::now()-tm).count());
@@ -1767,7 +1768,8 @@ fprintf(stderr,"slope:   %g   %g\n",slope,slope2*180/M_PI);*/
   /// Estimate writing slant angle ///
   float vslant = 0.0;
   if( deslant ) {
-    tm = high_resolution_clock::now();
+    if( verbose )
+      tm = high_resolution_clock::now();
     vslant = estimateSlant( desloped, deslant_min, deslant_max, deslant_step, deslant_hsteps );
     if( vslant == 0.0 )
       vslant = 0.0; // prevent negative zero

@@ -156,49 +156,46 @@ int sd_II(II1** ii1, II2** ii2, II1** cnt, int xmin, int ymin, int cropW, int cr
   return EXIT_SUCCESS;
 }
 
-int meanSd_II(II1** ii1, II2** ii2, II1** cnt, int xmin, int ymin, int cropW, int cropH, float* _mean, float* _sd) {
-  int xminm1 = xmin-1;
-  int yminm1 = ymin-1;
-  int xmax = xminm1+cropW;
-  int ymax = yminm1+cropH;
+int meanSd_II(II1** ii1, II2** ii2, II1** cnt, int xmin, int ymin, int cropW, int cropH, float& _mean, float& _sd) {
+    int xminm1 = xmin - 1;
+    int yminm1 = ymin - 1;
+    int xmax = xminm1 + cropW;
+    int ymax = yminm1 + cropH;
+    bool xminm1_cond = xminm1 > -1;
+    bool yminm1_cond = yminm1 > -1;
 
-  II1 S1 = ii1[ymax][xmax];
-  II2 S2 = ii2[ymax][xmax];
-  if(yminm1>-1) {
-    S1 -= ii1[yminm1][xmax];
-    S2 -= ii2[yminm1][xmax];
-    if(xminm1>-1) {
-      S1 += ii1[yminm1][xminm1]-ii1[ymax][xminm1];
-      S2 += ii2[yminm1][xminm1]-ii2[ymax][xminm1];
+    II1 S1 = ii1[ymax][xmax];
+    II2 S2 = ii2[ymax][xmax];
+
+    if () {
+        S1 -= ii1[yminm1][xmax];
+        S2 -= ii2[yminm1][xmax];
     }
-  }
-  else if(xminm1>-1) {
-    S1 -= ii1[ymax][xminm1];
-    S2 -= ii2[ymax][xminm1];
-  }
-
-  int numpix;
-  if(cnt!=NULL) {
-    numpix = cnt[ymax][xmax];
-    if(yminm1>-1) {
-      numpix -= cnt[yminm1][xmax];
-      if(xminm1>-1)
-        numpix += cnt[yminm1][xminm1]-cnt[ymax][xminm1];
+    if (xminm1_cond) {
+        S1 += ii1[ymax][xminm1] - (yminm1_cond ? ii1[yminm1][xminm1] : 0);
+        S2 += ii2[ymax][xminm1] - (yminm1_cond ? ii2[yminm1][xminm1] : 0);
     }
-    else if(xminm1>-1)
-      numpix -= cnt[ymax][xminm1];
-  }
-  else
-    numpix = cropW*cropH;
 
-  *_mean = (float)((int)S1)/((float)numpix);
-  if(((float)S2/(float)numpix-(*_mean)*(*_mean)) <= 0.0)
-    *_sd = 0;
-  else
-    *_sd = sqrt((float)S2/(float)numpix-(*_mean)*(*_mean));
+    int numpix;
+    if (cnt != NULL) {
+        numpix = cnt[ymax][xmax];
+        if (yminm1_cond) {
+            numpix -= cnt[yminm1][xmax];
+        }
+        if (xminm1_cond) {
+            numpix += cnt[ymax][xminm1] - (yminm1_cond ? cnt[yminm1][xminm1] : 0);
+        }
+    } else {
+        numpix = cropW * cropH;
+    }
 
-  return EXIT_SUCCESS;
+    _mean = static_cast<float>(S1) / numpix;
+    float variance = static_cast<float>(S2) / numpix - (_mean * _mean);
+    _sd = (variance <= 0.0f) ? 0 : sqrt(variance);
+
+    return EXIT_SUCCESS;
 }
+
 
 static inline void meanSdCW_II(int x, int y, int imgW, int imgH, II1** ii1, II2** ii2, II1** cnt, int winS, float* _mean, float* _sd) {
   int ymin = y-winS;
