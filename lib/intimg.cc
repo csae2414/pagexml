@@ -156,7 +156,7 @@ int sd_II(II1** ii1, II2** ii2, II1** cnt, int xmin, int ymin, int cropW, int cr
   return EXIT_SUCCESS;
 }
 
-inline int meanSd_II(II1** ii1, II2** ii2, II1** cnt, int xmin, int ymin, int cropW, int cropH, float& _mean, float& _sd) {
+inline int meanSd_II(II1** ii1, II2** ii2, II1** cnt, int xmin, int ymin, int cropW, int cropH, float* _mean, float* _sd) {
     int xminm1 = xmin - 1;
     int yminm1 = ymin - 1;
     int xmax = xminm1 + cropW;
@@ -189,9 +189,9 @@ inline int meanSd_II(II1** ii1, II2** ii2, II1** cnt, int xmin, int ymin, int cr
         numpix = cropW * cropH;
     }
 
-    _mean = static_cast<float>(S1) / numpix;
-    float variance = static_cast<float>(S2) / numpix - (_mean * _mean);
-    _sd = (variance <= 0.0f) ? 0 : sqrt(variance);
+    *_mean = static_cast<float>(S1) / numpix;
+    float variance = static_cast<float>(S2) / numpix - (*_mean * *_mean);
+    *_sd = (variance <= 0.0f) ? 0 : sqrt(variance);
 
     return EXIT_SUCCESS;
 }
