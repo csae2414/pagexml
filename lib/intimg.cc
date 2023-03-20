@@ -167,7 +167,7 @@ inline int meanSd_II(II1** ii1, II2** ii2, II1** cnt, int xmin, int ymin, int cr
     II1 S1 = ii1[ymax][xmax];
     II2 S2 = ii2[ymax][xmax];
 
-    if () {
+    if (yminm1_cond) {
         S1 -= ii1[yminm1][xmax];
         S2 -= ii2[yminm1][xmax];
     }
